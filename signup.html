@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>FarmLink - Sign Up</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+    <script defer src="js/signup.js"></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>🌾 FarmLink</h1>
+
+      <p class="subtitle">Create your free account</p>
+
+      <input
+        type="tel"
+        id="phone"
+        class="input-box"
+        placeholder="Phone Number"
+      />
+
+      <input
+        type="password"
+        id="pin"
+        maxlength="4"
+        class="input-box"
+        placeholder="Create 4-digit PIN"
+      />
+
+      <select id="userType" class="input-box">
+        <option value="">I am a...</option>
+
+        <option value="Farmer">👨‍🌾 Farmer</option>
+
+        <option value="Buyer">🛒 Buyer</option>
+      </select>
+
+      <button class="main-btn" onclick="registerUser()">Create Account</button>
+
+      <button class="secondary-btn" onclick="window.location = 'login.html'">
+        Already have an account?
+      </button>
+    </div>
+  </body>
+</html>
