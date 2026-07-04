@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>FarmLink Login</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>🌾 FarmLink</h1>
+
+      <h2>Welcome Back</h2>
+
+      <p class="subtitle">Login with your phone number</p>
+
+      <input
+        type="tel"
+        id="phone"
+        placeholder="Phone Number"
+        maxlength="11"
+        class="input-box"
+      />
+
+      <input
+        type="password"
+        id="pin"
+        placeholder="4-digit PIN"
+        maxlength="4"
+        class="input-box"
+      />
+
+      <button class="main-btn" onclick="login()">Login</button>
+
+      <button class="secondary-btn" onclick="window.location = 'signup.html'">
+        Create Account
+      </button>
+    </div>
+
+    <script>
+      function login() {
+        const phone = document.getElementById("phone").value;
+
+        const pin = document.getElementById("pin").value;
+
+        const savedPhone = localStorage.getItem("phone");
+
+        const savedPin = localStorage.getItem("pin");
+
+        if (phone === savedPhone && pin === savedPin) {
+          window.location = "dashboard.html";
+        } else {
+          alert("Incorrect phone number or PIN.");
+        }
+      }
+    </script>
+  </body>
+</html>
