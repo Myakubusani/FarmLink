@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!doctype html>
 <html lang="en">
   <head>
@@ -67,3 +68,78 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>FarmLink</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Google Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container">
+
+    <img src="assets/images/logo.png" class="logo" alt="FarmLink Logo">
+
+    <h1>🌾 FarmLink</h1>
+
+    <p class="subtitle">
+        Connecting Farmers Directly With Buyers
+    </p>
+
+    <h2>Select Language</h2>
+
+    <div class="language-grid">
+
+        <button onclick="setLanguage('english')">
+            🇬🇧
+            <span>English</span>
+        </button>
+
+        <button onclick="setLanguage('hausa')">
+            🇳🇬
+            <span>Hausa</span>
+        </button>
+
+        <button onclick="setLanguage('yoruba')">
+            🇳🇬
+            <span>Yoruba</span>
+        </button>
+
+        <button onclick="setLanguage('igbo')">
+            🇳🇬
+            <span>Igbo</span>
+        </button>
+
+        <button onclick="setLanguage('pidgin')">
+            🇳🇬
+            <span>Pidgin</span>
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+function setLanguage(language){
+
+    localStorage.setItem("language", language);
+
+    window.location.href = "login.html";
+
+}
+
+</script>
+
+</body>
+</html>
+>>>>>>> 954a4f7332d30ad11c20c99127d7d4dd5048717d
