@@ -4,7 +4,7 @@
 
 let selectedProduce = "";
 
-// Select produce
+// Select Produce Card
 const produceCards = document.querySelectorAll(".produce-card");
 
 produceCards.forEach(card => {
@@ -33,13 +33,17 @@ document.getElementById("postBtn").addEventListener("click", () => {
     const phone = document.getElementById("phone").value.trim();
     const location = document.getElementById("location").value.trim();
 
+    const photoInput = document.getElementById("photo");
+    const photoFile = photoInput.files[0];
+
+    // Validation
     if (selectedProduce === "") {
         alert("Please select a produce.");
         return;
     }
 
     if (quantity === "" || price === "") {
-        alert("Please fill all fields.");
+        alert("Please fill Quantity and Price.");
         return;
     }
 
@@ -48,6 +52,7 @@ document.getElementById("postBtn").addEventListener("click", () => {
         return;
     }
 
+    // Product Object
     const produce = {
         id: Date.now(),
         postedAt: new Date().toLocaleString(),
@@ -56,17 +61,43 @@ document.getElementById("postBtn").addEventListener("click", () => {
         location: location,
         name: selectedProduce,
         quantity: quantity,
-        price: price
+        price: price,
+        photo: ""
     };
 
-    let products = JSON.parse(localStorage.getItem("farmProducts")) || [];
+    // Function to save product
+    function saveProduct() {
 
-    products.push(produce);
+        let products = JSON.parse(localStorage.getItem("farmProducts")) || [];
 
-    localStorage.setItem("farmProducts", JSON.stringify(products));
+        products.push(produce);
 
-    alert("✅ Produce posted successfully!");
+        localStorage.setItem("farmProducts", JSON.stringify(products));
 
-    window.location.href = "dashboard.html";
+        alert("✅ Produce posted successfully!");
+
+        window.location.href = "dashboard.html";
+    }
+
+    // Save photo if selected
+    if (photoFile) {
+
+        const reader = new FileReader();
+
+        reader.onload = function () {
+
+            produce.photo = reader.result;
+
+            saveProduct();
+
+        };
+
+        reader.readAsDataURL(photoFile);
+
+    } else {
+
+        saveProduct();
+
+    }
 
 });

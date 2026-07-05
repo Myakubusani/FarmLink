@@ -58,7 +58,16 @@ function displayProducts(productList) {
 
             <div class="card-body">
 
-                <h3>🌾 ${product.name}</h3>
+            ${
+    product.photo
+        ? `<img src="${product.photo}"
+               class="img-fluid rounded mb-3"
+               style="height:200px;width:100%;object-fit:cover;">`
+        : ""
+}
+
+<h3>🌾 ${product.name}</h3>
+
 
                 <p><strong>👨 Farmer:</strong> ${product.farmerName || "Unknown Farmer"}</p>
 

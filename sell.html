@@ -146,19 +146,31 @@
       </div>
 
       <div class="d-grid gap-3">
-        <button class="btn btn-warning btn-lg" disabled>
-          🎤 Voice Description (Coming Soon)
-        </button>
 
-        <button id="postBtn" class="btn btn-success btn-lg">
-          🌾 Post Produce
-        </button>
+    <button class="btn btn-warning btn-lg" disabled>
+        🎤 Voice Description (Coming Soon)
+    </button>
 
-        <a href="dashboard.html" class="btn btn-secondary btn-lg">
-          ← Back to Dashboard
-        </a>
-      </div>
-    </div>
+    <label for="photo" class="btn btn-primary btn-lg">
+        📷 Upload Product Photo
+    </label>
+
+    <input
+        type="file"
+        id="photo"
+        accept="image/*"
+        class="d-none"
+    >
+
+    <button id="postBtn" class="btn btn-success btn-lg">
+        🌾 Post Produce
+    </button>
+
+    <a href="dashboard.html" class="btn btn-secondary btn-lg">
+        ← Back to Dashboard
+    </a>
+
+</div>
 
     <script src="js/sell.js"></script>
   </body>
