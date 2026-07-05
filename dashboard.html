@@ -9,84 +9,83 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-
-    <link rel="stylesheet" href="css/dashboard.css" />
   </head>
 
   <body class="bg-light">
-    <nav class="navbar navbar-success bg-success">
-      <div class="container-fluid">
-        <span class="navbar-brand text-white fw-bold"> 🌾 FarmLink </span>
-
-        <span class="text-white" id="location"> 📍 Detecting location... </span>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-success">
+      <div class="container">
+        <span class="navbar-brand fw-bold">🌾 FarmLink</span>
+        <span class="text-white" id="location">📍 Detecting location...</span>
       </div>
     </nav>
 
+    <!-- Main Content -->
     <div class="container mt-4">
-      <h3>Hello, Farmer 👋</h3>
+      <h2>Hello, Farmer 👋</h2>
+      <p>Welcome back to FarmLink.</p>
 
-      <p>What would you like to do today?</p>
-
+      <!-- Search -->
       <input
         type="text"
+        id="searchInput"
         class="form-control mb-4"
-        placeholder="Search produce..."
+        placeholder="🔍 Search produce..."
       />
 
+      <!-- Categories -->
       <div class="row">
         <div class="col-6 mb-3">
-          <div class="card shadow text-center p-3">
-            <h1>🌽</h1>
-            <h5>Grains</h5>
+          <div class="card text-center shadow-sm">
+            <div class="card-body">
+              <h1>🌾</h1>
+              <h5>Grains</h5>
+            </div>
           </div>
         </div>
 
         <div class="col-6 mb-3">
-          <div class="card shadow text-center p-3">
-            <h1>🥕</h1>
-            <h5>Vegetables</h5>
+          <div class="card text-center shadow-sm">
+            <div class="card-body">
+              <h1>🥕</h1>
+              <h5>Vegetables</h5>
+            </div>
           </div>
         </div>
 
         <div class="col-6 mb-3">
-          <div class="card shadow text-center p-3">
-            <h1>🍎</h1>
-            <h5>Fruits</h5>
+          <div class="card text-center shadow-sm">
+            <div class="card-body">
+              <h1>🍎</h1>
+              <h5>Fruits</h5>
+            </div>
           </div>
         </div>
 
         <div class="col-6 mb-3">
-          <div class="card shadow text-center p-3">
-            <h1>🐄</h1>
-            <h5>Livestock</h5>
+          <div class="card text-center shadow-sm">
+            <div class="card-body">
+              <h1>🐄</h1>
+              <h5>Livestock</h5>
+            </div>
           </div>
         </div>
       </div>
 
-      <h4 class="mt-4">Nearby Produce</h4>
+      <!-- Posted Products -->
+      <h3 class="mt-4 mb-3">🌾 Nearby Produce</h3>
 
-<div id="nearbyProduce">
-    <div class="card shadow mb-3">
-        <div class="card-body">
-            <h5>🍅 Tomatoes</h5>
-            <p>₦25,000</p>
-            <p>⭐⭐⭐⭐⭐</p>
+      <div id="nearbyProduce"></div>
 
-            <button class="btn btn-success w-100">
-                Contact Farmer
-            </button>
-        </div>
+      <!-- Sell Button -->
+      <div class="d-grid mt-4">
+        <a href="sell.html" class="btn btn-success btn-lg"> ➕ Sell Produce </a>
+      </div>
     </div>
-</div>
-
-<div class="text-center my-4">
-    <a href="sell.html" class="btn btn-success btn-lg rounded-pill px-5">
-        ➕ Sell Produce
-    </a>
-</div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="js/dashboard.js"></script>
+
+    <!-- Only include this if you already have location.js -->
     <script src="js/location.js"></script>
   </body>
 </html>

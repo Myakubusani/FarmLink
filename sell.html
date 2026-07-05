@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>Sell Produce - FarmLink</title>
 
     <link
@@ -11,77 +10,153 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="css/dashboard.css" />
+    <style>
+      .produce-card {
+        cursor: pointer;
+        transition: 0.3s;
+        border: 3px solid transparent;
+      }
+
+      .produce-card:hover {
+        transform: scale(1.03);
+      }
+
+      .border-success {
+        border: 3px solid #198754 !important;
+      }
+    </style>
   </head>
 
   <body class="bg-light">
-    <nav class="navbar bg-success">
+    <nav class="navbar navbar-dark bg-success">
       <div class="container">
-        <span class="navbar-brand text-white fw-bold"> 🌾 FarmLink </span>
+        <span class="navbar-brand fw-bold">🌾 FarmLink</span>
       </div>
     </nav>
 
     <div class="container mt-4">
-      <h2 class="fw-bold">What are you selling?</h2>
+      <h2 class="fw-bold mb-3">Sell Produce</h2>
 
-      <p>Select your produce.</p>
+      <p>Select what you want to sell.</p>
 
       <div class="row">
-        <div class="col-4 mb-3">
-          <button class="btn btn-light shadow w-100 p-3">🌽<br />Corn</button>
+        <div class="col-6 mb-3">
+          <div class="card produce-card" data-produce="Corn">
+            <div class="card-body text-center">
+              <h1>🌽</h1>
+              <h5>Corn</h5>
+            </div>
+          </div>
         </div>
 
-        <div class="col-4 mb-3">
-          <button class="btn btn-light shadow w-100 p-3">
-            🍅<br />Tomatoes
-          </button>
+        <div class="col-6 mb-3">
+          <div class="card produce-card" data-produce="Tomatoes">
+            <div class="card-body text-center">
+              <h1>🍅</h1>
+              <h5>Tomatoes</h5>
+            </div>
+          </div>
         </div>
 
-        <div class="col-4 mb-3">
-          <button class="btn btn-light shadow w-100 p-3">🥔<br />Yam</button>
+        <div class="col-6 mb-3">
+          <div class="card produce-card" data-produce="Rice">
+            <div class="card-body text-center">
+              <h1>🌾</h1>
+              <h5>Rice</h5>
+            </div>
+          </div>
         </div>
 
-        <div class="col-4 mb-3">
-          <button class="btn btn-light shadow w-100 p-3">🧅<br />Onion</button>
+        <div class="col-6 mb-3">
+          <div class="card produce-card" data-produce="Beans">
+            <div class="card-body text-center">
+              <h1>🫘</h1>
+              <h5>Beans</h5>
+            </div>
+          </div>
         </div>
 
-        <div class="col-4 mb-3">
-          <button class="btn btn-light shadow w-100 p-3">🌾<br />Rice</button>
+        <div class="col-6 mb-3">
+          <div class="card produce-card" data-produce="Yam">
+            <div class="card-body text-center">
+              <h1>🥔</h1>
+              <h5>Yam</h5>
+            </div>
+          </div>
         </div>
 
-        <div class="col-4 mb-3">
-          <button class="btn btn-light shadow w-100 p-3">🫘<br />Beans</button>
+        <div class="col-6 mb-3">
+          <div class="card produce-card" data-produce="Onion">
+            <div class="card-body text-center">
+              <h1>🧅</h1>
+              <h5>Onion</h5>
+            </div>
+          </div>
         </div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label"> Quantity </label>
-
+        <label class="form-label">Farmer Name</label>
         <input
-          type="number"
+          type="text"
+          id="farmerName"
           class="form-control"
-          id="price"
-          placeholder="Example: 25000"
+          placeholder="Enter your name"
         />
       </div>
 
       <div class="mb-3">
-        <label class="form-label"> Price (₦) </label>
+        <label class="form-label">Phone Number</label>
+        <input
+          type="tel"
+          id="phone"
+          class="form-control"
+          placeholder="08012345678"
+        />
+      </div>
 
+      <div class="mb-3">
+        <label class="form-label">Location</label>
+        <input
+          type="text"
+          id="location"
+          class="form-control"
+          placeholder="Zaria"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Quantity</label>
+        <input
+          type="text"
+          id="quantity"
+          class="form-control"
+          placeholder="Example: 2 Bags"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Price (₦)</label>
         <input
           type="number"
+          id="price"
           class="form-control"
-          id="quantity"
           placeholder="Example: 25000"
         />
       </div>
 
       <div class="d-grid gap-3">
-        <button class="btn btn-warning btn-lg">🎤 Speak Description</button>
+        <button class="btn btn-warning btn-lg" disabled>
+          🎤 Voice Description (Coming Soon)
+        </button>
 
-        <button class="btn btn-secondary btn-lg">📷 Upload Photo</button>
+        <button id="postBtn" class="btn btn-success btn-lg">
+          🌾 Post Produce
+        </button>
 
-        <button id="postBtn" class="btn btn-success">🌾 Post Produce</button>
+        <a href="dashboard.html" class="btn btn-secondary btn-lg">
+          ← Back to Dashboard
+        </a>
       </div>
     </div>
 

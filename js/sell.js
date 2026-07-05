@@ -1,28 +1,37 @@
+// =============================
+// FarmLink - Sell Produce
+// =============================
+
 let selectedProduce = "";
 
 // Select produce
-const produceButtons = document.querySelectorAll(".btn-light");
+const produceCards = document.querySelectorAll(".produce-card");
 
-produceButtons.forEach(button => {
-    button.addEventListener("click", () => {
+produceCards.forEach(card => {
 
-        produceButtons.forEach(btn => {
-            btn.classList.remove("btn-success");
-            btn.classList.add("btn-light");
+    card.addEventListener("click", () => {
+
+        produceCards.forEach(c => {
+            c.classList.remove("border-success");
         });
 
-        button.classList.remove("btn-light");
-        button.classList.add("btn-success");
+        card.classList.add("border-success");
 
-        selectedProduce = button.innerText.trim();
+        selectedProduce = card.dataset.produce;
+
     });
+
 });
 
 // Post Produce
 document.getElementById("postBtn").addEventListener("click", () => {
 
-    const quantity = document.getElementById("quantity").value;
-    const price = document.getElementById("price").value;
+    const quantity = document.getElementById("quantity").value.trim();
+    const price = document.getElementById("price").value.trim();
+
+    const farmerName = document.getElementById("farmerName").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const location = document.getElementById("location").value.trim();
 
     if (selectedProduce === "") {
         alert("Please select a produce.");
@@ -34,15 +43,30 @@ document.getElementById("postBtn").addEventListener("click", () => {
         return;
     }
 
+    if (farmerName === "" || phone === "" || location === "") {
+        alert("Please fill all farmer information.");
+        return;
+    }
+
     const produce = {
+        id: Date.now(),
+        postedAt: new Date().toLocaleString(),
+        farmerName: farmerName,
+        phone: phone,
+        location: location,
         name: selectedProduce,
         quantity: quantity,
         price: price
     };
 
-    localStorage.setItem("farmProduce", JSON.stringify(produce));
+    let products = JSON.parse(localStorage.getItem("farmProducts")) || [];
+
+    products.push(produce);
+
+    localStorage.setItem("farmProducts", JSON.stringify(products));
 
     alert("✅ Produce posted successfully!");
 
     window.location.href = "dashboard.html";
+
 });

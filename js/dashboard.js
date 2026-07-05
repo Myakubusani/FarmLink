@@ -1,3 +1,8 @@
+// =====================================
+// FarmLink Dashboard
+// =====================================
+
+// Navigation
 function goSell() {
     window.location.href = "sell.html";
 }
@@ -14,22 +19,127 @@ function goProfile() {
     window.location.href = "profile.html";
 }
 
-const produce = JSON.parse(localStorage.getItem("farmProduce"));
+const container = document.getElementById("nearbyProduce");
+const searchInput = document.getElementById("searchInput");
 
-if (produce) {
-    const container = document.getElementById("nearbyProduce");
+let products = JSON.parse(localStorage.getItem("farmProducts")) || [];
 
-    container.innerHTML += `
-        <div class="card shadow-sm mb-3">
-            <div class="card-body">
-                <h5>🌽 ${produce.name}</h5>
-                <p><strong>Quantity:</strong> ${produce.quantity}</p>
-                <p><strong>Price:</strong> ₦${Number(produce.price).toLocaleString()}</p>
+displayProducts(products);
 
-                <button class="btn btn-success w-100">
-                    Contact Farmer
-                </button>
+// =============================
+// Display Products
+// =============================
+function displayProducts(productList) {
+
+    container.innerHTML = "";
+
+    if (productList.length === 0) {
+
+        container.innerHTML = `
+            <div class="alert alert-warning text-center">
+                No produce available.
             </div>
+        `;
+
+        return;
+    }
+
+    productList.forEach(product => {
+
+        let whatsappLink = "#";
+
+        if (product.phone) {
+            whatsappLink = "https://wa.me/234" + product.phone.substring(1);
+        }
+
+        container.innerHTML += `
+
+        <div class="card shadow mb-3">
+
+            <div class="card-body">
+
+                <h3>🌾 ${product.name}</h3>
+
+                <p><strong>👨 Farmer:</strong> ${product.farmerName || "Unknown Farmer"}</p>
+
+                <p><strong>📍 Location:</strong> ${product.location || "Unknown"}</p>
+
+                <p><strong>📦 Quantity:</strong> ${product.quantity}</p>
+
+                <p><strong>💰 Price:</strong> ₦${Number(product.price).toLocaleString()}</p>
+
+                <p><strong>🕒 Posted:</strong> ${product.postedAt || "Recently"}</p>
+
+                <div class="d-grid gap-2">
+
+                    <a
+                        href="${product.phone ? "tel:" + product.phone : "#"}"
+                        class="btn btn-success">
+                        📞 Call Farmer
+                    </a>
+
+                    <a
+                        href="${whatsappLink}"
+                        target="_blank"
+                        class="btn btn-outline-success">
+                        💬 WhatsApp Farmer
+                    </a>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteProduct(${product.id})">
+                        🗑 Delete Product
+                    </button>
+
+                </div>
+
+            </div>
+
         </div>
-    `;
+
+        `;
+
+    });
+
+}
+
+// =============================
+// Search
+// =============================
+
+if (searchInput) {
+
+    searchInput.addEventListener("input", function () {
+
+        const keyword = this.value.toLowerCase();
+
+        const filtered = products.filter(product =>
+            product.name.toLowerCase().includes(keyword)
+        );
+
+        displayProducts(filtered);
+
+    });
+
+}
+
+// =============================
+// Delete Product
+// =============================
+
+function deleteProduct(id) {
+
+    if (!confirm("Delete this product?")) {
+        return;
+    }
+
+    products = products.filter(product => product.id !== id);
+
+    localStorage.setItem(
+        "farmProducts",
+        JSON.stringify(products)
+    );
+
+    displayProducts(products);
+
 }
