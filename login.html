@@ -12,12 +12,13 @@
 
   <body>
     <div class="container">
-      <h1>🌾 FarmLink</h1>
+      <img src="images/logo.jpg" alt="farmlink logo" class="logo" />
 
-      <h2>Welcome Back</h2>
+      <h1 id="appName">🌾 FarmLink</h1>
 
-      <p class="subtitle">Login with your phone number</p>
+      <h2 id="welcomeText">Welcome Back</h2>
 
+      <p id="loginSubtitle" class="subtitle">Login with your phone number</p>
       <input
         type="tel"
         id="phone"
@@ -29,34 +30,28 @@
       <input
         type="password"
         id="pin"
-        placeholder="4-digit PIN"
-        maxlength="4"
+        placeholder="6-digit PIN"
+        maxlength="6"
         class="input-box"
       />
 
-      <button class="main-btn" onclick="login()">Login</button>
+      <button id="loginBtn" class="main-btn" onclick="login()">Login</button>
 
-      <button class="secondary-btn" onclick="window.location = 'signup.html'">
+      <button
+        id="createAccountBtn"
+        class="secondary-btn"
+        onclick="window.location = 'signup.html'"
+      >
         Create Account
       </button>
     </div>
 
-    <script>
-      function login() {
-        const phone = document.getElementById("phone").value;
+    <footer class="text-center mt-5 py-3 border-top">
+      <small>© 2026 FarmLink | Connecting Farmers and Buyers</small>
+    </footer>
 
-        const pin = document.getElementById("pin").value;
+    <script src="js/language.js"></script>
 
-        const savedPhone = localStorage.getItem("phone");
-
-        const savedPin = localStorage.getItem("pin");
-
-        if (phone === savedPhone && pin === savedPin) {
-          window.location = "dashboard.html";
-        } else {
-          alert("Incorrect phone number or PIN.");
-        }
-      }
-    </script>
+    <script type="module" src="js/login.js"></script>
   </body>
 </html>

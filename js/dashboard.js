@@ -1,3 +1,18 @@
+const totalProducts = document.getElementById("totalProducts");
+const totalOrders = document.getElementById("totalOrders");
+const totalValue = document.getElementById("totalValue");
+
+import { db } from "./auth.js";
+
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  addDoc,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 // =====================================
 // FarmLink Dashboard
 // =====================================
@@ -19,16 +34,66 @@ function goProfile() {
     window.location.href = "profile.html";
 }
 
+// =====================================
+// Load Products
+// =====================================
+
 const container = document.getElementById("nearbyProduce");
 const searchInput = document.getElementById("searchInput");
 
-let products = JSON.parse(localStorage.getItem("farmProducts")) || [];
+let products = [];
 
-displayProducts(products);
+async function loadProducts() {
 
-// =============================
+    try {
+
+        const snapshot = await getDocs(collection(db, "products"));
+
+        products = [];
+
+        snapshot.forEach((document) => {
+
+            products.push({
+                firestoreId: document.id,
+                ...document.data()
+            });
+
+        });
+
+        displayProducts(products);
+        totalProducts.textContent = products.length;
+
+let total = 0;
+
+products.forEach(product => {
+    total += Number(product.price);
+});
+
+totalValue.textContent = "₦" + total.toLocaleString();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Unable to load products.");
+
+    }
+
+}
+
+async function loadOrderCount() {
+
+    const snapshot = await getDocs(collection(db, "orders"));
+
+    totalOrders.textContent = snapshot.size;
+
+}
+
+loadOrderCount();
+// =====================================
 // Display Products
-// =============================
+// =====================================
+
 function displayProducts(productList) {
 
     container.innerHTML = "";
@@ -46,61 +111,67 @@ function displayProducts(productList) {
 
     productList.forEach(product => {
 
-        let whatsappLink = "#";
-
-        if (product.phone) {
-            whatsappLink = "https://wa.me/234" + product.phone.substring(1);
-        }
-
         container.innerHTML += `
 
-        <div class="card shadow mb-3">
+        <div class="card shadow mb-4">
+
+            ${
+                product.photo
+                    ? `<img src="${product.photo}"
+                           class="card-img-top"
+                           style="height:220px;object-fit:cover;">`
+                    : ""
+            }
 
             <div class="card-body">
 
-            ${
-    product.photo
-        ? `<img src="${product.photo}"
-               class="img-fluid rounded mb-3"
-               style="height:200px;width:100%;object-fit:cover;">`
-        : ""
-}
+                <div class="d-flex justify-content-between align-items-center">
 
-<h3>🌾 ${product.name}</h3>
-
-
-                <p><strong>👨 Farmer:</strong> ${product.farmerName || "Unknown Farmer"}</p>
-
-                <p><strong>📍 Location:</strong> ${product.location || "Unknown"}</p>
-
-                <p><strong>📦 Quantity:</strong> ${product.quantity}</p>
-
-                <p><strong>💰 Price:</strong> ₦${Number(product.price).toLocaleString()}</p>
-
-                <p><strong>🕒 Posted:</strong> ${product.postedAt || "Recently"}</p>
-
-                <div class="d-grid gap-2">
-
-                    <a
-                        href="${product.phone ? "tel:" + product.phone : "#"}"
-                        class="btn btn-success">
-                        📞 Call Farmer
-                    </a>
-
-                    <a
-                        href="${whatsappLink}"
-                        target="_blank"
-                        class="btn btn-outline-success">
-                        💬 WhatsApp Farmer
-                    </a>
+                    <h4>🌾 ${product.name}</h4>
 
                     <button
-                        class="btn btn-danger"
-                        onclick="deleteProduct(${product.id})">
-                        🗑 Delete Product
+                        class="btn ${product.favorite ? "btn-danger" : "btn-outline-danger"} btn-sm"
+                        onclick="toggleFavorite('${product.firestoreId}')">
+                        ❤️
                     </button>
 
                 </div>
+
+                <span class="badge bg-success">
+                    ${product.category || "Other"}
+                </span>
+
+                <p class="text-warning mt-2">
+                    ${"⭐".repeat(product.rating || 5)}
+                </p>
+
+                <h3 class="text-success">
+                    ₦${Number(product.price).toLocaleString()}
+                </h3>
+
+                <div class="d-grid gap-2 mt-3">
+
+    <button
+        class="btn btn-success"
+        onclick="viewProduct('${product.firestoreId}')">
+        👀 View Details
+    </button>
+
+    <button
+        class="btn btn-warning"
+        onclick="editProduct('${product.firestoreId}')">
+        ✏️ Edit
+    </button>
+
+    <button
+        class="btn btn-outline-danger"
+        onclick="deleteProduct('${product.firestoreId}')">
+        🗑 Delete
+    </button>
+
+    
+
+</div>
 
             </div>
 
@@ -112,9 +183,11 @@ function displayProducts(productList) {
 
 }
 
-// =============================
+// Show products
+loadProducts();
+// =====================================
 // Search
-// =============================
+// =====================================
 
 if (searchInput) {
 
@@ -122,33 +195,174 @@ if (searchInput) {
 
         const keyword = this.value.toLowerCase();
 
-        const filtered = products.filter(product =>
+        const filteredProducts = products.filter(product =>
             product.name.toLowerCase().includes(keyword)
         );
 
-        displayProducts(filtered);
+        displayProducts(filteredProducts);
 
     });
 
 }
 
-// =============================
-// Delete Product
-// =============================
+// =====================================
+// Category Filter
+// =====================================
 
-function deleteProduct(id) {
+const categoryFilter = document.getElementById("categoryFilter");
+
+if (categoryFilter) {
+
+    categoryFilter.addEventListener("change", function () {
+
+        if (this.value === "All") {
+            displayProducts(products);
+            return;
+        }
+
+        const filteredProducts = products.filter(product =>
+            product.category === this.value
+        );
+
+        displayProducts(filteredProducts);
+
+    });
+
+}
+
+// =====================================
+// Sort Products
+// =====================================
+
+const sortFilter = document.getElementById("sortFilter");
+
+if (sortFilter) {
+
+    sortFilter.addEventListener("change", function () {
+
+        let sortedProducts = [...products];
+
+        if (this.value === "low") {
+            sortedProducts.sort((a, b) => Number(a.price) - Number(b.price));
+        }
+
+        if (this.value === "high") {
+            sortedProducts.sort((a, b) => Number(b.price) - Number(a.price));
+        }
+
+        if (this.value === "new") {
+            sortedProducts.sort((a, b) => b.id - a.id);
+        }
+
+        displayProducts(sortedProducts);
+
+    });
+
+}
+
+// =====================================
+// Favorite
+// =====================================
+
+async function toggleFavorite(productId) {
+
+    const uid = localStorage.getItem("uid");
+
+    if (!uid) {
+        alert("Please log in first.");
+        return;
+    }
+
+    try {
+
+        await addDoc(collection(db, "favorites"), {
+
+            userId: uid,
+            productId: productId
+
+        });
+
+        alert("❤️ Added to Favorites!");
+
+    } catch (error) {
+
+        alert(error.message);
+
+    }
+
+}
+
+window.toggleFavorite = toggleFavorite;
+// =====================================
+// Delete Product
+// =====================================
+
+async function deleteProduct(id) {
 
     if (!confirm("Delete this product?")) {
         return;
     }
 
-    products = products.filter(product => product.id !== id);
+    try {
 
-    localStorage.setItem(
-        "farmProducts",
-        JSON.stringify(products)
-    );
+        await deleteDoc(doc(db, "products", id));
 
-    displayProducts(products);
+        alert("Product deleted successfully.");
+
+        loadProducts();
+
+    } catch (error) {
+
+        alert(error.message);
+
+    }
 
 }
+
+window.deleteProduct = deleteProduct;
+
+// =====================================
+// View Product
+// =====================================
+
+function viewProduct(id) {
+
+    localStorage.setItem("selectedProduct", id);
+
+    window.location.href = "product.html";
+
+}
+
+window.viewProduct = viewProduct;
+
+function editProduct(id) {
+
+    localStorage.setItem("editProduct", id);
+
+    window.location.href = "edit.html";
+
+}
+
+window.editProduct = editProduct;
+
+// Logout
+function goOrders() {
+    window.location.href = "orders.html";
+}
+
+window.goOrders = goOrders;
+
+function logout() {
+    window.location.href = "login.html";
+}
+
+window.logout = logout;
+
+function goFavorites() {
+    window.location.href = "favorites.html";
+}
+
+window.goFavorites = goFavorites;
+
+
+    

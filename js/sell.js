@@ -1,3 +1,17 @@
+import { db, app } from "./auth.js";
+
+import {
+    collection,
+    addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+    getAuth
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const auth = getAuth(app);
+
+
 // =============================
 // FarmLink - Sell Produce
 // =============================
@@ -32,7 +46,6 @@ document.getElementById("postBtn").addEventListener("click", () => {
     const farmerName = document.getElementById("farmerName").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const location = document.getElementById("location").value.trim();
-
     const photoInput = document.getElementById("photo");
     const photoFile = photoInput.files[0];
 
@@ -52,31 +65,74 @@ document.getElementById("postBtn").addEventListener("click", () => {
         return;
     }
 
+    let category = "";
+
+switch (selectedProduce) {
+
+    case "Corn":
+    case "Rice":
+    case "Beans":
+        category = "Grains";
+        break;
+
+    case "Tomatoes":
+    case "Onion":
+    case "Yam":
+        category = "Vegetables";
+        break;
+
+    case "Cow":
+    case "Goat":
+    case "Chicken":
+    case "Eggs":
+        category = "Livestock";
+        break;
+
+    default:
+        category = "Other";
+}
+
     // Product Object
     const produce = {
-        id: Date.now(),
-        postedAt: new Date().toLocaleString(),
-        farmerName: farmerName,
-        phone: phone,
-        location: location,
-        name: selectedProduce,
-        quantity: quantity,
-        price: price,
-        photo: ""
-    };
+    id: Date.now(),
+    postedAt: new Date().toLocaleString(),
+    farmerName: farmerName,
+    phone: phone,
+    location: location,
+    category: category,
+    name: selectedProduce,
+    quantity: quantity,
+    price: price,
+    photo: "",
+    rating: 5,
+    userId: localStorage.getItem("uid")};
 
     // Function to save product
     function saveProduct() {
+    
+const uid = localStorage.getItem("uid");
 
-        let products = JSON.parse(localStorage.getItem("farmProducts")) || [];
+if (!uid) {
+    alert("Please login first.");
+    return;
+}
 
-        products.push(produce);
+produce.userId = uid;
+produce.userId = auth.currentUser.uid;
 
-        localStorage.setItem("farmProducts", JSON.stringify(products));
+addDoc(collection(db, "products"), produce)
+  .then(() => {
 
-        alert("✅ Produce posted successfully!");
+    alert("✅ Produce posted successfully!");
 
-        window.location.href = "dashboard.html";
+    window.location.href = "dashboard.html";
+
+  })
+  .catch((error) => {
+
+    alert("Error posting produce: " + error.message);
+
+  });
     }
 
     // Save photo if selected

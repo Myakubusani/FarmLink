@@ -22,11 +22,11 @@
 
   <body>
     <div class="container">
-      <img src="assets/images/logo.png" class="logo" alt="FarmLink Logo" />
+      <img src="images/logo.jpg" class="logo" alt="FarmLink Logo" />
 
-      <h1>🌾 FarmLink</h1>
+      <h1 id="appName">🌾 FarmLink</h1>
 
-      <p class="subtitle">Connecting Farmers Directly With Buyers</p>
+      <p id="subtitle" class="subtitle">Connecting Farmers Directly With Buyers</p>
 
       <h2>Select Language</h2>
 
@@ -57,6 +57,8 @@
         </button>
       </div>
     </div>
+    
+    <script src="js/language.js"></script>
 
     <script>
       function setLanguage(language) {
@@ -64,7 +66,13 @@
 
         window.location.href = "login.html";
       }
+      
+     
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<footer class="text-center mt-5 py-3 border-top">
+    <small>© 2026 FarmLink | Connecting Farmers and Buyers</small>
+</footer>  
+   
   </body>
 </html>

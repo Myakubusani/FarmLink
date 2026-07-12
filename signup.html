@@ -7,7 +7,7 @@
     <title>FarmLink - Sign Up</title>
 
     <link rel="stylesheet" href="css/style.css" />
-    <script defer src="js/signup.js"></script>
+    <script type="module" src="js/signup.js"></script>
   </head>
 
   <body>
@@ -26,9 +26,9 @@
       <input
         type="password"
         id="pin"
-        maxlength="4"
+        maxlength="6"
         class="input-box"
-        placeholder="Create 4-digit PIN"
+        placeholder="Create 6-digit PIN"
       />
 
       <select id="userType" class="input-box">
@@ -45,5 +45,11 @@
         Already have an account?
       </button>
     </div>
+
+    <script src="js/language.js"></script>
+
+    <footer class="text-center mt-5 py-3 border-top">
+      <small>© 2026 FarmLink | Connecting Farmers and Buyers</small>
+    </footer>
   </body>
 </html>

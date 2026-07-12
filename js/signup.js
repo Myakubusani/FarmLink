@@ -1,3 +1,11 @@
+import { auth } from "./auth.js";
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+
 function registerUser(){
 
 const phone=document.getElementById("phone").value;
@@ -14,14 +22,22 @@ return;
 
 }
 
-localStorage.setItem("phone",phone);
+const email = phone + "@farmlink.com";
+const password = "FarmLink" + pin;
 
-localStorage.setItem("pin",pin);
+createUserWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
 
-localStorage.setItem("type",type);
+    localStorage.setItem("phone", phone);
+    localStorage.setItem("pin", pin);
+    localStorage.setItem("userType", type);
 
-alert("Account created successfully!");
+    alert("Account created successfully!");
 
-window.location="login.html";
-
+    window.location.href = "login.html";
+  })
+  .catch((error) => {
+    alert(error.message);
+  });
 }
+window.registerUser = registerUser;

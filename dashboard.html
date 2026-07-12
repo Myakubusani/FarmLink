@@ -11,12 +11,21 @@
     />
   </head>
 
+  <button onclick="logout()" class="btn btn-danger">🚪 Logout</button>
+
   <body class="bg-light">
     <!-- Navbar -->
-    <nav class="navbar navbar-dark bg-success">
-      <div class="container">
-        <span class="navbar-brand fw-bold">🌾 FarmLink</span>
-        <span class="text-white" id="location">📍 Detecting location...</span>
+    <nav class="navbar navbar-dark bg-success mb-4">
+      <div class="container-fluid">
+        <span class="navbar-brand"> 🌾 FarmLink </span>
+
+        <div>
+          <a href="favorites.html" class="btn btn-warning btn-sm">
+            ❤️ My Favorites
+          </a>
+
+          <a href="orders.html" class="btn btn-primary btn-sm"> 🛒 Orders </a>
+        </div>
       </div>
     </nav>
 
@@ -24,7 +33,6 @@
     <div class="container mt-4">
       <h2>Hello, Farmer 👋</h2>
       <p>Welcome back to FarmLink.</p>
-
       <!-- Search -->
       <input
         type="text"
@@ -32,7 +40,49 @@
         class="form-control mb-4"
         placeholder="🔍 Search produce..."
       />
+      <select id="categoryFilter" class="form-select mb-3">
+        <option value="All">All Categories</option>
+        <option value="Grains">🌾 Grains</option>
+        <option value="Vegetables">🥕 Vegetables</option>
+        <option value="Fruits">🍎 Fruits</option>
+        <option value="Livestock">🐄 Livestock</option>
+      </select>
 
+      <select id="sortFilter" class="form-select mb-3">
+        <option value="default">Sort Products</option>
+        <option value="low">💰 Lowest Price First</option>
+        <option value="high">💎 Highest Price First</option>
+        <option value="new">🕒 Newest First</option>
+      </select>
+
+      <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+          <div class="card text-center shadow">
+            <div class="card-body">
+              <h5>Total Products</h5>
+              <h2 id="totalProducts">0</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="card text-center shadow">
+            <div class="card-body">
+              <h5>Total Orders</h5>
+              <h2 id="totalOrders">0</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+          <div class="card text-center shadow">
+            <div class="card-body">
+              <h5>Total Value</h5>
+              <h2 id="totalValue">₦0</h2>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- Categories -->
       <div class="row">
         <div class="col-6 mb-3">
@@ -82,10 +132,15 @@
         <a href="sell.html" class="btn btn-success btn-lg"> ➕ Sell Produce </a>
       </div>
     </div>
+    <script src="js/language.js"></script>
 
-    <script src="js/dashboard.js"></script>
+    <script type="module" src="js/dashboard.js"></script>
 
     <!-- Only include this if you already have location.js -->
     <script src="js/location.js"></script>
+
+    <footer class="text-center mt-5 py-3 border-top">
+      <small>© 2026 FarmLink | Connecting Farmers and Buyers</small>
+    </footer>
   </body>
 </html>
