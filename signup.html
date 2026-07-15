@@ -7,7 +7,6 @@
     <title>FarmLink - Sign Up</title>
 
     <link rel="stylesheet" href="css/style.css" />
-    <script type="module" src="js/signup.js"></script>
   </head>
 
   <body>
@@ -16,36 +15,39 @@
 
       <p class="subtitle">Create your free account</p>
 
+      <!-- Phone -->
       <input
-        type="tel"
-        id="phone"
-        class="input-box"
-        placeholder="Phone Number"
-      />
+  type="tel"
+  id="phone"
+  class="input-box"
+  placeholder="Phone Number"
+/>
 
-      <input
-        type="password"
-        id="pin"
-        maxlength="6"
-        class="input-box"
-        placeholder="Create 6-digit PIN"
-      />
+<input
+  type="password"
+  id="pin"
+  maxlength="6"
+  class="input-box"
+  placeholder="Create 6-digit PIN"
+/>
 
-      <select id="userType" class="input-box">
-        <option value="">I am a...</option>
+<select id="userType" class="input-box">
+  <option value="">I am a...</option>
+  <option value="Farmer">👨‍🌾 Farmer</option>
+  <option value="Buyer">🛒 Buyer</option>
+</select>
 
-        <option value="Farmer">👨‍🌾 Farmer</option>
+<button class="main-btn" onclick="registerUser()">
+  Create Account
+</button>
+<button
+  class="secondary-btn"
+  onclick="window.location.href='login.html'"
+>
+  Already have an account? Login
+</button>
 
-        <option value="Buyer">🛒 Buyer</option>
-      </select>
-
-      <button class="main-btn" onclick="registerUser()">Create Account</button>
-
-      <button class="secondary-btn" onclick="window.location = 'login.html'">
-        Already have an account?
-      </button>
-    </div>
-
+    <script type="module" src="js/signup.js"></script>
     <script src="js/language.js"></script>
 
     <footer class="text-center mt-5 py-3 border-top">

@@ -12,18 +12,19 @@
 
   <body>
     <div class="container">
-      <img src="images/logo.jpg" alt="farmlink logo" class="logo" />
+      <img src="images/logo.jpg" alt="FarmLink logo" class="logo" />
 
       <h1 id="appName">🌾 FarmLink</h1>
 
       <h2 id="welcomeText">Welcome Back</h2>
 
       <p id="loginSubtitle" class="subtitle">Login with your phone number</p>
+
+      <!-- Phone Number -->
       <input
         type="tel"
         id="phone"
         placeholder="Phone Number"
-        maxlength="11"
         class="input-box"
       />
 
@@ -35,7 +36,7 @@
         class="input-box"
       />
 
-      <button id="loginBtn" class="main-btn" onclick="login()">Login</button>
+      <button class="main-btn" onclick="login()">Login</button>
 
       <button
         id="createAccountBtn"
@@ -51,7 +52,6 @@
     </footer>
 
     <script src="js/language.js"></script>
-
     <script type="module" src="js/login.js"></script>
   </body>
 </html>

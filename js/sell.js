@@ -1,5 +1,12 @@
 import { db, app } from "./auth.js";
 
+const currentUserType = localStorage.getItem("userType");
+
+if (currentUserType !== "Farmer") {
+    alert("Only farmers can sell produce.");
+    window.location.href = "dashboard.html";
+}
+
 import {
     collection,
     addDoc

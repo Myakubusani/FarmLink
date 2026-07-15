@@ -1,26 +1,58 @@
+import { db, auth } from "./auth.js";
+
+import {
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+    collection,
+    getDocs,
+    deleteDoc,
+    doc,
+    addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// =====================================
+// FarmLink Dashboard
+// =====================================
+const currentUserType = localStorage.getItem("userType");
+const sellButton = document.getElementById("sellButton");
+
+if (sellButton && currentUserType !== "Farmer") {
+    sellButton.style.display = "none";
+}
+// Logged-in user
+const currentUserId = localStorage.getItem("uid");
+console.log("Current User ID:", currentUserId);
+console.log("Current User Type:", currentUserType);
+
+// Dashboard statistics
 const totalProducts = document.getElementById("totalProducts");
 const totalOrders = document.getElementById("totalOrders");
 const totalValue = document.getElementById("totalValue");
 
-import { db } from "./auth.js";
+// Products container and search
+const container = document.getElementById("nearbyProduce");
+const searchInput = document.getElementById("searchInput");
 
-import {
-  collection,
-  getDocs,
-  deleteDoc,
-  doc,
-  addDoc,
-  query,
-  where
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-// =====================================
-// FarmLink Dashboard
-// =====================================
+let products = [];
 
+// =====================================
 // Navigation
+// =====================================
+
 function goSell() {
+    const userType = localStorage.getItem("userType");
+
+    if (userType !== "Farmer") {
+        alert("Only farmers can sell produce.");
+        return;
+    }
+
     window.location.href = "sell.html";
 }
+
+window.goSell = goSell;
 
 function goBuy() {
     window.location.href = "buyers.html";
@@ -34,14 +66,25 @@ function goProfile() {
     window.location.href = "profile.html";
 }
 
+function goOrders() {
+    window.location.href = "orders.html";
+}
+
+function goFavorites() {
+    window.location.href = "favorites.html";
+}
+
+// Make navigation functions available to HTML
+window.goSell = goSell;
+window.goBuy = goBuy;
+window.goRatings = goRatings;
+window.goProfile = goProfile;
+window.goOrders = goOrders;
+window.goFavorites = goFavorites;
+
 // =====================================
 // Load Products
 // =====================================
-
-const container = document.getElementById("nearbyProduce");
-const searchInput = document.getElementById("searchInput");
-
-let products = [];
 
 async function loadProducts() {
 
@@ -61,40 +104,63 @@ async function loadProducts() {
         });
 
         displayProducts(products);
-        totalProducts.textContent = products.length;
 
-let total = 0;
+        // Total products
+        if (totalProducts) {
+            totalProducts.textContent = products.length;
+        }
 
-products.forEach(product => {
-    total += Number(product.price);
-});
+        // Total product value
+        let total = 0;
 
-totalValue.textContent = "₦" + total.toLocaleString();
+        products.forEach(product => {
+            total += Number(product.price) || 0;
+        });
+
+        if (totalValue) {
+            totalValue.textContent = "₦" + total.toLocaleString();
+        }
 
     } catch (error) {
 
         console.error(error);
-
         alert("Unable to load products.");
 
     }
 
 }
 
+// =====================================
+// Load Order Count
+// =====================================
+
 async function loadOrderCount() {
 
-    const snapshot = await getDocs(collection(db, "orders"));
+    try {
 
-    totalOrders.textContent = snapshot.size;
+        const snapshot = await getDocs(collection(db, "orders"));
+
+        if (totalOrders) {
+            totalOrders.textContent = snapshot.size;
+        }
+
+    } catch (error) {
+
+        console.error("Unable to load orders:", error);
+
+    }
 
 }
 
-loadOrderCount();
 // =====================================
 // Display Products
 // =====================================
 
 function displayProducts(productList) {
+
+    if (!container) {
+        return;
+    }
 
     container.innerHTML = "";
 
@@ -111,71 +177,88 @@ function displayProducts(productList) {
 
     productList.forEach(product => {
 
+        // Only the farmer who owns the product can edit/delete it
+        const canManageProduct =
+            currentUserType === "Farmer" &&
+            product.userId === currentUserId;
+
         container.innerHTML += `
 
-        <div class="card shadow mb-4">
+            <div class="card shadow mb-4">
 
-            ${
-                product.photo
-                    ? `<img src="${product.photo}"
-                           class="card-img-top"
-                           style="height:220px;object-fit:cover;">`
-                    : ""
-            }
+                ${
+                    product.photo
+                        ? `
+                            <img
+                                src="${product.photo}"
+                                class="card-img-top"
+                                style="height:220px; object-fit:cover;"
+                            >
+                        `
+                        : ""
+                }
 
-            <div class="card-body">
+                <div class="card-body">
 
-                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center">
 
-                    <h4>🌾 ${product.name}</h4>
+                        <h4>🌾 ${product.name}</h4>
 
-                    <button
-                        class="btn ${product.favorite ? "btn-danger" : "btn-outline-danger"} btn-sm"
-                        onclick="toggleFavorite('${product.firestoreId}')">
-                        ❤️
-                    </button>
+                        <button
+                            class="btn ${
+                                product.favorite
+                                    ? "btn-danger"
+                                    : "btn-outline-danger"
+                            } btn-sm"
+                            onclick="toggleFavorite('${product.firestoreId}')">
+                            ❤️
+                        </button>
+
+                    </div>
+
+                    <span class="badge bg-success">
+                        ${product.category || "Other"}
+                    </span>
+
+                    <p class="text-warning mt-2">
+                        ${"⭐".repeat(product.rating || 5)}
+                    </p>
+
+                    <h3 class="text-success">
+                        ₦${Number(product.price).toLocaleString()}
+                    </h3>
+
+                    <div class="d-grid gap-2 mt-3">
+
+                        <button
+                            class="btn btn-success"
+                            onclick="viewProduct('${product.firestoreId}')">
+                            👀 View Details
+                        </button>
+
+                        ${
+                            canManageProduct
+                                ? `
+                                    <button
+                                        class="btn btn-warning"
+                                        onclick="editProduct('${product.firestoreId}')">
+                                        ✏️ Edit
+                                    </button>
+
+                                    <button
+                                        class="btn btn-outline-danger"
+                                        onclick="deleteProduct('${product.firestoreId}')">
+                                        🗑 Delete
+                                    </button>
+                                `
+                                : ""
+                        }
+
+                    </div>
 
                 </div>
 
-                <span class="badge bg-success">
-                    ${product.category || "Other"}
-                </span>
-
-                <p class="text-warning mt-2">
-                    ${"⭐".repeat(product.rating || 5)}
-                </p>
-
-                <h3 class="text-success">
-                    ₦${Number(product.price).toLocaleString()}
-                </h3>
-
-                <div class="d-grid gap-2 mt-3">
-
-    <button
-        class="btn btn-success"
-        onclick="viewProduct('${product.firestoreId}')">
-        👀 View Details
-    </button>
-
-    <button
-        class="btn btn-warning"
-        onclick="editProduct('${product.firestoreId}')">
-        ✏️ Edit
-    </button>
-
-    <button
-        class="btn btn-outline-danger"
-        onclick="deleteProduct('${product.firestoreId}')">
-        🗑 Delete
-    </button>
-
-    
-
-</div>
-
             </div>
-
-        </div>
 
         `;
 
@@ -183,8 +266,6 @@ function displayProducts(productList) {
 
 }
 
-// Show products
-loadProducts();
 // =====================================
 // Search
 // =====================================
@@ -196,7 +277,9 @@ if (searchInput) {
         const keyword = this.value.toLowerCase();
 
         const filteredProducts = products.filter(product =>
-            product.name.toLowerCase().includes(keyword)
+            product.name
+                .toLowerCase()
+                .includes(keyword)
         );
 
         displayProducts(filteredProducts);
@@ -216,8 +299,10 @@ if (categoryFilter) {
     categoryFilter.addEventListener("change", function () {
 
         if (this.value === "All") {
+
             displayProducts(products);
             return;
+
         }
 
         const filteredProducts = products.filter(product =>
@@ -243,15 +328,30 @@ if (sortFilter) {
         let sortedProducts = [...products];
 
         if (this.value === "low") {
-            sortedProducts.sort((a, b) => Number(a.price) - Number(b.price));
+
+            sortedProducts.sort(
+                (a, b) =>
+                    Number(a.price) - Number(b.price)
+            );
+
         }
 
         if (this.value === "high") {
-            sortedProducts.sort((a, b) => Number(b.price) - Number(a.price));
+
+            sortedProducts.sort(
+                (a, b) =>
+                    Number(b.price) - Number(a.price)
+            );
+
         }
 
         if (this.value === "new") {
-            sortedProducts.sort((a, b) => b.id - a.id);
+
+            sortedProducts.sort(
+                (a, b) =>
+                    Number(b.id) - Number(a.id)
+            );
+
         }
 
         displayProducts(sortedProducts);
@@ -269,8 +369,10 @@ async function toggleFavorite(productId) {
     const uid = localStorage.getItem("uid");
 
     if (!uid) {
+
         alert("Please log in first.");
         return;
+
     }
 
     try {
@@ -286,6 +388,7 @@ async function toggleFavorite(productId) {
 
     } catch (error) {
 
+        console.error(error);
         alert(error.message);
 
     }
@@ -293,11 +396,35 @@ async function toggleFavorite(productId) {
 }
 
 window.toggleFavorite = toggleFavorite;
+
 // =====================================
 // Delete Product
 // =====================================
 
 async function deleteProduct(id) {
+
+    // Find the product before deleting
+    const product = products.find(
+        item => item.firestoreId === id
+    );
+
+    if (!product) {
+
+        alert("Product not found.");
+        return;
+
+    }
+
+    // Security check
+    if (
+        currentUserType !== "Farmer" ||
+        product.userId !== currentUserId
+    ) {
+
+        alert("You are not allowed to delete this product.");
+        return;
+
+    }
 
     if (!confirm("Delete this product?")) {
         return;
@@ -305,7 +432,9 @@ async function deleteProduct(id) {
 
     try {
 
-        await deleteDoc(doc(db, "products", id));
+        await deleteDoc(
+            doc(db, "products", id)
+        );
 
         alert("Product deleted successfully.");
 
@@ -313,6 +442,7 @@ async function deleteProduct(id) {
 
     } catch (error) {
 
+        console.error(error);
         alert(error.message);
 
     }
@@ -327,7 +457,10 @@ window.deleteProduct = deleteProduct;
 
 function viewProduct(id) {
 
-    localStorage.setItem("selectedProduct", id);
+    localStorage.setItem(
+        "selectedProduct",
+        id
+    );
 
     window.location.href = "product.html";
 
@@ -335,9 +468,38 @@ function viewProduct(id) {
 
 window.viewProduct = viewProduct;
 
+// =====================================
+// Edit Product
+// =====================================
+
 function editProduct(id) {
 
-    localStorage.setItem("editProduct", id);
+    const product = products.find(
+        item => item.firestoreId === id
+    );
+
+    if (!product) {
+
+        alert("Product not found.");
+        return;
+
+    }
+
+    // Security check
+    if (
+        currentUserType !== "Farmer" ||
+        product.userId !== currentUserId
+    ) {
+
+        alert("You are not allowed to edit this product.");
+        return;
+
+    }
+
+    localStorage.setItem(
+        "editProduct",
+        id
+    );
 
     window.location.href = "edit.html";
 
@@ -345,24 +507,31 @@ function editProduct(id) {
 
 window.editProduct = editProduct;
 
+// =====================================
 // Logout
-function goOrders() {
-    window.location.href = "orders.html";
-}
+// =====================================
 
-window.goOrders = goOrders;
+async function logout() {
+  try {
+    await signOut(auth);
 
-function logout() {
+    localStorage.removeItem("uid");
+    localStorage.removeItem("userType");
+    localStorage.removeItem("phone");
+
     window.location.href = "login.html";
+  } catch (error) {
+    console.error("Logout error:", error);
+    alert("Unable to logout.");
+  }
 }
 
 window.logout = logout;
 
-function goFavorites() {
-    window.location.href = "favorites.html";
-}
+// =====================================
+// Start Dashboard
+// =====================================
 
-window.goFavorites = goFavorites;
+loadProducts();
+loadOrderCount();
 
-
-    

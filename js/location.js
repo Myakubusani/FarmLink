@@ -1,39 +1,33 @@
 // Get user's location
-
 const locationText = document.getElementById("location");
 
-if (navigator.geolocation) {
+if (locationText) {
 
-    navigator.geolocation.getCurrentPosition(
+    if (navigator.geolocation) {
 
-        success,
+        navigator.geolocation.getCurrentPosition(
+            success,
+            error
+        );
 
-        error
-
-    );
-
-} else {
-
-    locationText.innerHTML = "📍 Location not supported";
+    } else {
+        locationText.innerHTML = "📍 Location not supported";
+    }
 
 }
 
-function success(position){
+function success(position) {
 
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
 
     locationText.innerHTML =
-    "📍 Latitude: " +
-    latitude.toFixed(4) +
-    " Longitude: " +
-    longitude.toFixed(4);
-
+        "📍 Latitude: " +
+        latitude.toFixed(4) +
+        " Longitude: " +
+        longitude.toFixed(4);
 }
 
-function error(){
-
-    locationText.innerHTML =
-    "📍 Location permission denied";
-
+function error() {
+    locationText.innerHTML = "📍 Location permission denied";
 }
